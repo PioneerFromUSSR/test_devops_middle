@@ -27,5 +27,10 @@ pipeline {
                sh 'docker run -d -p 80:8080 --name $CONTAINER_NAME $DOCKER_HUB_REPO'
        }
    }
+       node {
+       def imageLine = 'pioneerfromussr/flaskapp:latest'`
+       writeFile file: 'anchore_images', text: imageLine`
+       anchore name: 'anchore_images'`
+   }
  }
 }
