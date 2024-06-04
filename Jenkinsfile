@@ -19,6 +19,19 @@ pipeline {
                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
        }
    }
+       stage('analyze') {
+            steps {
+                sh 'echo "$DOCKER_HUB_REPO:latest `pwd`/Dockerfile" > anchore_images'
+                anchore name: 'anchore_images'
+            }
+       }
+       stage('teardown') {
+           steps {
+               sh'''
+                   for i in `cat anchore_images | awk '{print $1}'`;do docker rmi $i; done
+               '''
+            }
+       }
        stage('Deploy') {
            steps {
                echo 'Deploying..'
@@ -26,11 +39,6 @@ pipeline {
                sh 'docker rm $CONTAINER_NAME || true'
                sh 'docker run -d -p 80:8080 --name $CONTAINER_NAME $DOCKER_HUB_REPO'
        }
-   }
-       node {
-       def imageLine = 'pioneerfromussr/flaskapp:latest'
-       writeFile file: 'anchore_images', text: imageLine
-       anchore name: 'anchore_images'
    }
  }
 }
