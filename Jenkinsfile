@@ -27,5 +27,4 @@ pipeline {
            sh 'docker run -d -p 80:8080 --name $CONTAINER_NAME $DOCKER_HUB_REPO'
        }
    }
- }
-} 
+}
