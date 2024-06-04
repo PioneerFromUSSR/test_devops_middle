@@ -28,9 +28,9 @@ pipeline {
        }
    }
        node {
-       def imageLine = 'pioneerfromussr/flaskapp:latest'`
-       writeFile file: 'anchore_images', text: imageLine`
-       anchore name: 'anchore_images'`
+       def imageLine = 'pioneerfromussr/flaskapp:latest'
+       writeFile file: 'anchore_images', text: imageLine
+       anchore name: 'anchore_images'
    }
  }
 }
