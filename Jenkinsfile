@@ -15,14 +15,15 @@ pipeline {
    }
        stage('Docker build') {
            steps {
-               echo 'Building..'
-               sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
+                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
+                sh 'docker image tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
        }
    }
-       stage('Docker Push') {
+       stage('Docker push') {
            steps {
                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
                sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+               sh 'docker push $DOCKER_HUB_REPO:$BUILD_NUMBER'
                sh 'docker push $DOCKER_HUB_REPO:latest' 
        }
      }  
@@ -30,11 +31,8 @@ pipeline {
        stage('test') {
            steps {
                sh 'python test.py'
-            }
-           post {
-               always {junit 'test-reports/*.xml'}
-            }
-       } 
+       }
+   } 
  /*      stage('analyze') {
             steps {
                 sh 'echo "$DOCKER_HUB_REPO:latest `pwd`/Dockerfile" > anchore_images'
