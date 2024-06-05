@@ -1,0 +1,12 @@
+---
+- name: Fetch the repo from GitHub
+  git:
+    repo: 'https://github.com/PioneerFromUSSR/test_devops_middle.git'
+    clone: yes
+    dest: ./flaskapp
+    force: yes
+
+- name: Docker run
+  shell: docker build -t pioneerfromussr/flaskapp . && docker run -it pioneerfromussr/flaskapp
+  args:
+    chdir: ./flaskapp
