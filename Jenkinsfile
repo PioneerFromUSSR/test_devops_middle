@@ -17,6 +17,7 @@ pipeline {
            steps {
                echo 'Building..'
                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
+               image.push()
        }
    }
        stage('analyze') {
