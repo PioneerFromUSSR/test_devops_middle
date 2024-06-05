@@ -19,6 +19,13 @@ pipeline {
                 sh 'docker image tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
        }
    }
+       stage('Vulnerability Scan - Docker Trivy') {
+           steps {
+               withCredentials([string(credentialsId: 'trivy_github_token', variable: 'TOKEN')]) {
+               sh "sed -i 's#token_github#${TOKEN}#g' trivy-image-scan.sh"      
+               sh "sudo bash trivy-image-scan.sh"
+        }
+   }
        stage('Docker push') {
            steps {
                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
