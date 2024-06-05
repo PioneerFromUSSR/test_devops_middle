@@ -30,6 +30,8 @@ pipeline {
    }    
        stage('test') {
            steps {
+               sh '''
+               cd /app
                sh 'python test.py'
        }
    } 
