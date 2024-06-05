@@ -18,7 +18,7 @@ pipeline {
                echo 'Building..'
                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
                script {
-               def image = docker.build('$DOCKER_HUB_REPO:latest')
+               def image = docker.build("$DOCKER_HUB_REPO:latest")
                image.push()
                }
        }
