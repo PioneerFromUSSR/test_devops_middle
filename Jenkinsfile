@@ -24,7 +24,8 @@ pipeline {
                withCredentials([string(credentialsId: 'trivy_github_token', variable: 'TOKEN')]) {
                sh "sed -i 's#token_github#${TOKEN}#g' trivy-image-scan.sh"      
                sh "sudo bash trivy-image-scan.sh"
-        }
+      }
+     }
    }
        stage('Docker push') {
            steps {
@@ -44,5 +45,4 @@ pipeline {
        }
    }
  }
-}
 }
