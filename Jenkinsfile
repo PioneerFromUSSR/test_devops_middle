@@ -17,7 +17,6 @@ pipeline {
            steps {
                echo 'Building..'
                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
-               def image = docker.build("$DOCKER_HUB_REPO:latest")
        }
    }
        stage('Docker Push') {
