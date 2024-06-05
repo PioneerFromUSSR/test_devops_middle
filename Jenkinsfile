@@ -13,16 +13,21 @@ pipeline {
                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/PioneerFromUSSR/test_devops_middle']]])
        }
    }
-       stage('Build') {
+       stage('Docker build') {
            steps {
                echo 'Building..'
                sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
-               script {
                def image = docker.build("$DOCKER_HUB_REPO:latest")
-               image.push()
-               }
        }
    }
+       stage('Docker Push') {
+           steps {
+               withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+               sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+               sh 'docker push $DOCKER_HUB_REPO:latest' 
+       }
+     }  
+   }    
        stage('analyze') {
             steps {
                 sh 'echo "$DOCKER_HUB_REPO:latest `pwd`/Dockerfile" > anchore_images'
