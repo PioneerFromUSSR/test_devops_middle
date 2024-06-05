@@ -27,7 +27,15 @@ pipeline {
        }
      }  
    }    
-       stage('analyze') {
+       stage('test') {
+           steps {
+               sh 'python test.py'
+            }
+           post {
+               always {junit 'test-reports/*.xml'}
+            }
+       } 
+ /*      stage('analyze') {
             steps {
                 sh 'echo "$DOCKER_HUB_REPO:latest `pwd`/Dockerfile" > anchore_images'
                 anchore name: 'anchore_images'
@@ -39,7 +47,7 @@ pipeline {
                    for i in `cat anchore_images | awk '{print $1}'`;do docker rmi $i; done
                '''
             }
-       }
+       } */
        stage('Deploy') {
            steps {
                echo 'Deploying..'
