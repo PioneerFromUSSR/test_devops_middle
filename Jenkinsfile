@@ -18,7 +18,14 @@ pipeline {
                 sh 'docker image build -t $DOCKER_HUB_REPO:latest .'
                 sh 'docker image tag $DOCKER_HUB_REPO:latest $DOCKER_HUB_REPO:$BUILD_NUMBER'
        }
-   }
+   }         
+       stage('Trivy Scan') {
+            steps {
+                script {
+                    sh 'trivy image --output trivy_report.html $DOCKER_HUB_REPO:$BUILD_NUMBER'
+                }
+            }
+        }
        stage('Docker push') {
            steps {
                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
@@ -37,4 +44,18 @@ pipeline {
        }
    }
  }
+ post {
+        always {
+            archiveArtifacts artifacts: "trivy_report.html", fingerprint: true
+                
+            publishHTML (target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'trivy_report.html',
+                reportName: 'Trivy Scan',
+                ])
+            }
+        }
 }
