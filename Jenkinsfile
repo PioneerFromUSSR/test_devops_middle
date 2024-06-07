@@ -22,10 +22,18 @@ pipeline {
        stage('Trivy Scan') {
             steps {
                 script {
-                    sh 'trivy image --output trivy_report.html $DOCKER_HUB_REPO:$BUILD_NUMBER'
+                    sh ""trivy image --format template --template \"@/usr/local/share/trivy/templates/html.tpl\"--output trivy_report.html $DOCKER_HUB_REPO:$BUILD_NUMBER""
+                publishHTML(target: [
+                  allowMissing: true,
+                  alwaysLinkToLastBuild: false,
+                  keepAll: true,
+                  reportDir: ".",
+                  reportFiles: "trivy_report.html",
+                  reportName: "Trivy Report",
+                 ])
                 }
             }
-        }
+       }  
        stage('Docker push') {
            steps {
                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
@@ -44,4 +52,4 @@ pipeline {
        }
    }
  }
-}
+ }
