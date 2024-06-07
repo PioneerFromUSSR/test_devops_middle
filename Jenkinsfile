@@ -22,7 +22,7 @@ pipeline {
        stage('Trivy Scan') {
             steps {
                 script {
-                    sh ""trivy image --format template --template \"@/usr/local/share/trivy/templates/html.tpl\"--output trivy_report.html $DOCKER_HUB_REPO:$BUILD_NUMBER""
+                    sh """trivy image --format template --template \"@/usr/local/share/trivy/templates/html.tpl\" --output trivy_report.html $DOCKER_HUB_REPO:$BUILD_NUMBER"""
                 publishHTML(target: [
                   allowMissing: true,
                   alwaysLinkToLastBuild: false,
