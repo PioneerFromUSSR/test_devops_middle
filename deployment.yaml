@@ -15,7 +15,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-test-app
+  name: flaskapp
 spec:
   selector:
     matchLabels:
